@@ -51,6 +51,105 @@ ChatLogic::~ChatLogic()
     //// EOF STUDENT CODE
 }
 
+ChatLogic::ChatLogic(const ChatLogic &source)
+{
+    std::cout << "COPYING content of instance " << &source << " to instane " << this << std::endl;
+
+    for (auto it = std::begin(source._nodes); it != std::end(source._nodes); ++it)
+    {
+        GraphNode node = *(*it);
+        _nodes.push_back(std::move(std::make_unique<GraphNode> (node.GetID())));
+    }
+    
+    for (auto it = std::begin(source._edges); it != std::end(source._edges); ++it)
+    {
+        _edges.push_back(*it);
+    }
+
+    _currentNode = source._currentNode;
+    _chatBot = source._chatBot;
+    _panelDialog = source._panelDialog;
+}
+    
+ChatLogic& ChatLogic::operator=(const ChatLogic &source)
+{
+    std::cout << "ASSIGNING content of instance " << &source << " to instane " << this << std::endl;
+    
+    if (this == &source)
+        return *this;
+    
+    for (auto it = std::begin(source._nodes); it != std::end(source._nodes); ++it)
+    {
+        GraphNode node = *(*it);
+        _nodes.push_back(std::move(std::make_unique<GraphNode> (node.GetID())));
+    }
+    
+    for (auto it = std::begin(source._edges); it != std::end(source._edges); ++it)
+    {
+        _edges.push_back(*it);
+    }
+
+    _currentNode = source._currentNode;
+    _chatBot = source._chatBot;
+    _panelDialog = source._panelDialog;
+
+    return *this;
+}
+    
+ChatLogic::ChatLogic(ChatLogic &&source)
+{
+    std::cout << "MOVING (constructor) content of instance " << &source << " to instane " << this << std::endl;
+    
+    for (auto it = std::begin(source._nodes); it != std::end(source._nodes); ++it)
+    {
+        std::unique_ptr<GraphNode> node = std::move(*it);
+        _nodes.push_back(std::move(node));
+    }
+    
+    for (auto it = std::begin(source._edges); it != std::end(source._edges); ++it)
+    {
+        _edges.push_back(*it);
+    }
+
+    _currentNode = source._currentNode;
+    _chatBot = source._chatBot;
+    _panelDialog = source._panelDialog;
+
+    source._currentNode = nullptr;
+    source._chatBot = nullptr;
+    source._panelDialog = nullptr;
+}
+    
+ChatLogic & ChatLogic::operator=(ChatLogic &&source)
+{
+    std::cout << "MOVING (assignment) content of instance " << &source << " to instane " << this << std::endl;
+    
+    if (this == &source)
+        return *this;
+    
+
+    for (auto it = std::begin(source._nodes); it != std::end(source._nodes); ++it)
+    {
+        std::unique_ptr<GraphNode> node = std::move(*it);
+        _nodes.push_back(std::move(node));
+    }
+    
+    for (auto it = std::begin(source._edges); it != std::end(source._edges); ++it)
+    {
+        _edges.push_back(*it);
+    }
+
+    _currentNode = source._currentNode;
+    _chatBot = source._chatBot;
+    _panelDialog = source._panelDialog;
+
+    source._currentNode = nullptr;
+    source._chatBot = nullptr;
+    source._panelDialog = nullptr;
+
+    return *this;
+}
+
 template <typename T>
 void ChatLogic::AddAllTokensToElement(std::string tokenID, tokenlist &tokens, T &element)
 {
@@ -132,7 +231,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                         // create new element if ID does not yet exist
                         if (newNode == _nodes.end())
                         {
-                            _nodes->push_back(std::move(std::make_unique<GraphNode> (id)));
+                            _nodes.push_back(std::move(std::make_unique<GraphNode> (id)));
                             newNode = _nodes.end() - 1; // get iterator to last element
 
                             // add all answers to current node
@@ -198,7 +297,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
 
     // identify root node
     GraphNode *rootNode = nullptr;
-    for (auto it = std::begin(*_nodes); it != std::end(*_nodes); ++it)
+    for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
     {
         // search for nodes which have no incoming edges
         if ((*it)->GetNumberOfParents() == 0)

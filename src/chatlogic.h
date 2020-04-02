@@ -40,6 +40,12 @@ public:
     ChatLogic();
     ~ChatLogic();
 
+    // rule of five: copy/move constructors & assigment operators
+    ChatLogic(const ChatLogic &source);
+    ChatLogic &operator=(const ChatLogic &source);
+    ChatLogic(ChatLogic &&source);
+    ChatLogic &operator=(ChatLogic &&source);
+
     // getter / setter
     void SetPanelDialogHandle(ChatBotPanelDialog *panelDialog);
     void SetChatbotHandle(ChatBot *chatbot);
