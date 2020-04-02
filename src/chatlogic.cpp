@@ -47,6 +47,8 @@ ChatLogic::~ChatLogic()
         delete *it;
     }
 
+    _panelDialog = nullptr;
+    
     ////
     //// EOF STUDENT CODE
 }
