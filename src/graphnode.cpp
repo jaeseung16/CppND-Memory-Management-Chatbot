@@ -28,12 +28,12 @@ GraphNode::GraphNode(const GraphNode &source)
     {
         GraphEdge childEdge = *(*it);
         _childEdges.push_back(std::move(std::make_unique<GraphEdge> (childEdge.GetID())));
+        //_childEdges.push_back(std::move(*it));
     }
 
     for (auto it = std::begin(source._parentEdges); it != std::end(source._parentEdges); ++it)
     {
-        GraphEdge *parentEdge = *it;
-        _parentEdges.push_back(parentEdge);
+        _parentEdges.push_back(*it);
     }
 
     *_chatBot = *(source._chatBot);
@@ -41,7 +41,8 @@ GraphNode::GraphNode(const GraphNode &source)
 
     for (auto it = std::begin(source._answers); it != std::end(source._answers); ++it)
     {
-        _answers.push_back(*it);
+        std::string answer = *it;
+        _answers.push_back(answer);
     }
 }
 
@@ -56,12 +57,12 @@ GraphNode & GraphNode::operator=(const GraphNode &source)
     {
         GraphEdge childEdge = *(*it);
         _childEdges.push_back(std::move(std::make_unique<GraphEdge> (childEdge.GetID())));
+        //_childEdges.push_back(std::move(*it));
     }
 
     for (auto it = std::begin(source._parentEdges); it != std::end(source._parentEdges); ++it)
     {
-        GraphEdge *parentEdge = *it;
-        _parentEdges.push_back(parentEdge);
+        _parentEdges.push_back(*it);
     }
 
     *_chatBot = *(source._chatBot);
@@ -69,7 +70,8 @@ GraphNode & GraphNode::operator=(const GraphNode &source)
 
     for (auto it = std::begin(source._answers); it != std::end(source._answers); ++it)
     {
-        _answers.push_back(*it);
+        std::string answer = *it;
+        _answers.push_back(answer);
     }
 
     return *this;
@@ -81,17 +83,15 @@ GraphNode::GraphNode(GraphNode &&source)
 
     for (auto it = std::begin(source._childEdges); it != std::end(source._childEdges); ++it)
     {
-        std::unique_ptr<GraphEdge> edge = std::move(*it);
-        _childEdges.push_back(std::move(edge));
+        _childEdges.push_back(std::move(*it));
     }
 
     for (auto it = std::begin(source._parentEdges); it != std::end(source._parentEdges); ++it)
     {
-        GraphEdge *parentEdge = *it;
-        _parentEdges.push_back(parentEdge);
+        _parentEdges.push_back(*it);
     }
 
-    *_chatBot = *(source._chatBot);
+    _chatBot = source._chatBot;
     _id = source._id;
 
     for (auto it = std::begin(source._answers); it != std::end(source._answers); ++it)
@@ -99,9 +99,11 @@ GraphNode::GraphNode(GraphNode &&source)
         _answers.push_back(*it);
     }
 
+    //source._childEdges.clear();
+    //source._parentEdges.clear();
     source._chatBot = nullptr;
     source._id = 0;
-    source._answers.clear();
+    //source._answers.clear();
 }
     
 GraphNode & GraphNode::operator=(GraphNode &&source)
@@ -113,17 +115,15 @@ GraphNode & GraphNode::operator=(GraphNode &&source)
     
     for (auto it = std::begin(source._childEdges); it != std::end(source._childEdges); ++it)
     {
-        std::unique_ptr<GraphEdge> edge = std::move(*it);
-        _childEdges.push_back(std::move(edge));
+        _childEdges.push_back(std::move(*it));
     }
 
     for (auto it = std::begin(source._parentEdges); it != std::end(source._parentEdges); ++it)
     {
-        GraphEdge *parentEdge = *it;
-        _parentEdges.push_back(parentEdge);
+        _parentEdges.push_back(*it);
     }
 
-    *_chatBot = *(source._chatBot);
+    _chatBot = source._chatBot;
     _id = source._id;
 
     for (auto it = std::begin(source._answers); it != std::end(source._answers); ++it)
@@ -145,12 +145,14 @@ void GraphNode::AddToken(std::string token)
 
 void GraphNode::AddEdgeToParentNode(GraphEdge *edge)
 {
-    _parentEdges.push_back(edge);
+    GraphEdge aEdge = *edge;
+    _parentEdges.push_back(std::make_shared<GraphEdge> (aEdge));
 }
 
 void GraphNode::AddEdgeToChildNode(GraphEdge *edge)
 {
-    _childEdges.push_back(std::move(std::make_unique<GraphEdge> (edge -> GetID())));
+    GraphEdge aEdge = *edge;
+    _childEdges.push_back(std::move(std::make_unique<GraphEdge> (aEdge)));
 }
 
 //// STUDENT CODE
