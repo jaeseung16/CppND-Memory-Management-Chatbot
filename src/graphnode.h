@@ -16,7 +16,7 @@ private:
     ////
 
     // data handles (owned)
-    std::vector<GraphEdge *> _childEdges;  // edges to subsequent nodes
+    std::vector<std::unique_ptr<GraphEdge>> _childEdges;  // edges to subsequent nodes
 
     // data handles (not owned)
     std::vector<GraphEdge *> _parentEdges; // edges to preceding nodes 
@@ -33,6 +33,12 @@ public:
     // constructor / destructor
     GraphNode(int id);
     ~GraphNode();
+
+    // rule of five: copy/move constructors & assigment operators
+    GraphNode(const GraphNode &source);
+    GraphNode &operator=(const GraphNode &source);
+    GraphNode(GraphNode &&source);
+    GraphNode &operator=(GraphNode &&source);
 
     // getter / setter
     int GetID() { return _id; }
