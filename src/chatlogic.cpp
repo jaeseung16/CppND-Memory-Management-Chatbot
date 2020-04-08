@@ -47,7 +47,7 @@ ChatLogic::~ChatLogic()
         delete *it;
     }
 
-    _panelDialog = nullptr;
+    //_panelDialog = nullptr;
     
     ////
     //// EOF STUDENT CODE
@@ -79,6 +79,13 @@ ChatLogic& ChatLogic::operator=(const ChatLogic &source)
     
     if (this == &source)
         return *this;
+
+    _currentNode = nullptr;
+    _chatBot = nullptr;
+    _panelDialog = nullptr;
+
+    _nodes.clear();
+    _edges.clear();
     
     for (auto it = std::begin(source._nodes); it != std::end(source._nodes); ++it)
     {
@@ -129,6 +136,12 @@ ChatLogic & ChatLogic::operator=(ChatLogic &&source)
     if (this == &source)
         return *this;
     
+    _currentNode = nullptr;
+    _chatBot = nullptr;
+    _panelDialog = nullptr;
+
+    _nodes.clear();
+    _edges.clear();
 
     for (auto it = std::begin(source._nodes); it != std::end(source._nodes); ++it)
     {
@@ -318,8 +331,15 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
 
     // add chatbot to graph root node
     _chatBot->SetRootNode(rootNode);
-    rootNode->MoveChatbotHere(_chatBot);
+    //rootNode->MoveChatbotHere(_chatBot);
     
+    std::unique_ptr<ChatBot> chatBotInStack (_chatBot);
+    chatBotInStack -> SetChatLogicHandle(this);
+    
+    //std::cout << "chatbot = " << chatBotInStack << std::endl;
+    //std::cout << "_chatbot = " << _chatBot << std::endl;
+    rootNode->MoveChatbotHere(std::move(chatBotInStack));
+    //std::cout << "rootNode = " << rootNode << std::endl;
     ////
     //// EOF STUDENT CODE
 }

@@ -47,12 +47,12 @@ ChatBot::~ChatBot()
 
 ChatBot::ChatBot(const ChatBot &source)
 {
+    std::cout << "COPYING content of instance " << &source << " to instance " << this << std::endl;
+
     *_image = *source._image;
     *_chatLogic = *source._chatLogic;
     *_rootNode = *source._rootNode;
     *_currentNode = *source._currentNode;
-
-    std::cout << "COPYING content of instance " << &source << " to instance " << this << std::endl;
 }
 
 ChatBot &ChatBot::operator=(const ChatBot &source) 
@@ -62,10 +62,15 @@ ChatBot &ChatBot::operator=(const ChatBot &source)
     if (this == &source)
         return *this;
 
+    _image = NULL;
+    _chatLogic = nullptr;
+    _rootNode = nullptr;
+    _currentNode = nullptr;
+
     *_image = *source._image;
     *_chatLogic = *source._chatLogic;
-    _rootNode = source._rootNode;
-    _currentNode = source._currentNode;
+    *_rootNode = *source._rootNode;
+    *_currentNode = *source._currentNode;
 
     return *this;
 }
@@ -90,7 +95,12 @@ ChatBot &ChatBot::operator=(ChatBot &&source)
 
     if (this == &source) 
        return *this;
-    
+
+    _image = NULL;
+    _chatLogic = nullptr;
+    _rootNode = nullptr;
+    _currentNode = nullptr;
+
     _image = source._image;
     _chatLogic = source._chatLogic;
     _rootNode = source._rootNode;
