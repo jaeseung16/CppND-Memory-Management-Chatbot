@@ -41,12 +41,6 @@ ChatLogic::~ChatLogic()
     //    delete *it;
     //}
 
-    // delete all edges
-    for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
-    {
-        delete *it;
-    }
-
     //_panelDialog = nullptr;
     
     ////
@@ -61,11 +55,6 @@ ChatLogic::ChatLogic(const ChatLogic &source)
     {
         GraphNode node = *(*it);
         _nodes.push_back(std::move(std::make_unique<GraphNode> (node.GetID())));
-    }
-    
-    for (auto it = std::begin(source._edges); it != std::end(source._edges); ++it)
-    {
-        _edges.push_back(*it);
     }
 
     _currentNode = source._currentNode;
@@ -85,7 +74,6 @@ ChatLogic& ChatLogic::operator=(const ChatLogic &source)
     _panelDialog = nullptr;
 
     _nodes.clear();
-    _edges.clear();
     
     for (auto it = std::begin(source._nodes); it != std::end(source._nodes); ++it)
     {
@@ -93,11 +81,6 @@ ChatLogic& ChatLogic::operator=(const ChatLogic &source)
         _nodes.push_back(std::move(std::make_unique<GraphNode> (node.GetID())));
     }
     
-    for (auto it = std::begin(source._edges); it != std::end(source._edges); ++it)
-    {
-        _edges.push_back(*it);
-    }
-
     _currentNode = source._currentNode;
     _chatBot = source._chatBot;
     _panelDialog = source._panelDialog;
@@ -115,11 +98,6 @@ ChatLogic::ChatLogic(ChatLogic &&source)
         _nodes.push_back(std::move(node));
     }
     
-    for (auto it = std::begin(source._edges); it != std::end(source._edges); ++it)
-    {
-        _edges.push_back(*it);
-    }
-
     _currentNode = source._currentNode;
     _chatBot = source._chatBot;
     _panelDialog = source._panelDialog;
@@ -141,17 +119,11 @@ ChatLogic & ChatLogic::operator=(ChatLogic &&source)
     _panelDialog = nullptr;
 
     _nodes.clear();
-    _edges.clear();
 
     for (auto it = std::begin(source._nodes); it != std::end(source._nodes); ++it)
     {
         std::unique_ptr<GraphNode> node = std::move(*it);
         _nodes.push_back(std::move(node));
-    }
-    
-    for (auto it = std::begin(source._edges); it != std::end(source._edges); ++it)
-    {
-        _edges.push_back(*it);
     }
 
     _currentNode = source._currentNode;
@@ -274,17 +246,16 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                             auto childNode = std::find_if(_nodes.begin(), _nodes.end(), [&childToken](std::unique_ptr<GraphNode>& node) { return node->GetID() == std::stoi(childToken->second); });
 
                             // create new edge
-                            GraphEdge *edge = new GraphEdge(id);
+                            std::unique_ptr<GraphEdge> edge (new GraphEdge(id));
                             edge->SetChildNode((*childNode).get());
                             edge->SetParentNode((*parentNode).get());
-                            _edges.push_back(edge);
 
                             // find all keywords for current node
                             AddAllTokensToElement("KEYWORD", tokens, *edge);
 
                             // store reference in child node and parent node
-                            (*childNode)->AddEdgeToParentNode(edge);
-                            (*parentNode)->AddEdgeToChildNode(edge);
+                            (*childNode)->AddEdgeToParentNode(edge.get());
+                            (*parentNode)->AddEdgeToChildNode(std::move(edge));
                         }
 
                         ////
