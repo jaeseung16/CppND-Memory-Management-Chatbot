@@ -35,14 +35,6 @@ ChatLogic::~ChatLogic()
     // delete chatbot instance
     _chatBot->SetChatLogicHandle(nullptr);
 
-    // delete all nodes
-    //for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
-    //{
-    //    delete *it;
-    //}
-
-    //_panelDialog = nullptr;
-    
     ////
     //// EOF STUDENT CODE
 }
@@ -302,15 +294,11 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
 
     // add chatbot to graph root node
     _chatBot->SetRootNode(rootNode);
-    //rootNode->MoveChatbotHere(_chatBot);
-    
-    std::unique_ptr<ChatBot> chatBotInStack (_chatBot);
-    chatBotInStack -> SetChatLogicHandle(this);
-    
-    //std::cout << "chatbot = " << chatBotInStack << std::endl;
-    //std::cout << "_chatbot = " << _chatBot << std::endl;
+
+    ChatBot chatBotInStack (std::move(*_chatBot));
     rootNode->MoveChatbotHere(std::move(chatBotInStack));
-    //std::cout << "rootNode = " << rootNode << std::endl;
+    _currentNode = rootNode;
+
     ////
     //// EOF STUDENT CODE
 }
@@ -325,9 +313,14 @@ void ChatLogic::SetChatbotHandle(ChatBot *chatbot)
     _chatBot = chatbot;
 }
 
+void ChatLogic::SetCurrentNode(GraphNode *node)
+{
+    _currentNode = node;
+}
+
 void ChatLogic::SendMessageToChatbot(std::string message)
 {
-    _chatBot->ReceiveMessageFromUser(message);
+    _currentNode->GetChatBot()->ReceiveMessageFromUser(message);
 }
 
 void ChatLogic::SendMessageToUser(std::string message)
@@ -337,5 +330,5 @@ void ChatLogic::SendMessageToUser(std::string message)
 
 wxBitmap *ChatLogic::GetImageFromChatbot()
 {
-    return _chatBot->GetImageHandle();
+    return _currentNode->GetChatBot()->GetImageHandle();
 }

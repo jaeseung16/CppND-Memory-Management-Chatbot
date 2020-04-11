@@ -39,6 +39,7 @@ public:
     //// EOF STUDENT CODE
 
     // getters / setters
+    GraphNode *GetCurrentNode() { return _currentNode; }
     void SetCurrentNode(GraphNode *node);
     void SetRootNode(GraphNode *rootNode) { _rootNode = rootNode; }
     void SetChatLogicHandle(ChatLogic *chatLogic) { _chatLogic = chatLogic; }

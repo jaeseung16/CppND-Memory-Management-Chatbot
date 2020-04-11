@@ -26,7 +26,6 @@ GraphNode::GraphNode(const GraphNode &source)
     {
         GraphEdge childEdge = *(*it);
         _childEdges.push_back(std::move(std::make_unique<GraphEdge> (childEdge.GetID())));
-        //_childEdges.push_back(std::move(*it));
     }
 
     for (auto it = std::begin(source._parentEdges); it != std::end(source._parentEdges); ++it)
@@ -34,7 +33,7 @@ GraphNode::GraphNode(const GraphNode &source)
         _parentEdges.push_back(std::move(*it));
     }
 
-    *_chatBot = *(source._chatBot);
+    _chatBot = source._chatBot;
     _id = source._id;
 
     for (auto it = std::begin(source._answers); it != std::end(source._answers); ++it)
@@ -55,7 +54,6 @@ GraphNode & GraphNode::operator=(const GraphNode &source)
     {
         GraphEdge childEdge = *(*it);
         _childEdges.push_back(std::move(std::make_unique<GraphEdge> (childEdge.GetID())));
-        //_childEdges.push_back(std::move(*it));
     }
 
     for (auto it = std::begin(source._parentEdges); it != std::end(source._parentEdges); ++it)
@@ -63,7 +61,7 @@ GraphNode & GraphNode::operator=(const GraphNode &source)
         _parentEdges.push_back(*it);
     }
 
-    *_chatBot = *(source._chatBot);
+    _chatBot = source._chatBot;
     _id = source._id;
 
     for (auto it = std::begin(source._answers); it != std::end(source._answers); ++it)
@@ -89,7 +87,6 @@ GraphNode::GraphNode(GraphNode &&source)
         _parentEdges.push_back(*it);
     }
 
-    *_chatBot = *source._chatBot;
     _id = source._id;
 
     for (auto it = std::begin(source._answers); it != std::end(source._answers); ++it)
@@ -97,11 +94,11 @@ GraphNode::GraphNode(GraphNode &&source)
         _answers.push_back(*it);
     }
 
-    //source._childEdges.clear();
-    //source._parentEdges.clear();
-    source._chatBot = nullptr;
+    _chatBot = std::move(source._chatBot);
+    source._childEdges.clear();
+    source._parentEdges.clear();
     source._id = 0;
-    //source._answers.clear();
+    source._answers.clear();
 }
     
 GraphNode & GraphNode::operator=(GraphNode &&source)
@@ -110,6 +107,10 @@ GraphNode & GraphNode::operator=(GraphNode &&source)
     
     if (this == &source)
         return *this;
+
+    _childEdges.clear();
+    _parentEdges.clear();
+    _answers.clear();
     
     for (auto it = std::begin(source._childEdges); it != std::end(source._childEdges); ++it)
     {
@@ -121,7 +122,6 @@ GraphNode & GraphNode::operator=(GraphNode &&source)
         _parentEdges.push_back(*it);
     }
 
-    *_chatBot = *source._chatBot;
     _id = source._id;
 
     for (auto it = std::begin(source._answers); it != std::end(source._answers); ++it)
@@ -129,7 +129,9 @@ GraphNode & GraphNode::operator=(GraphNode &&source)
         _answers.push_back(*it);
     }
 
-    source._chatBot = nullptr;
+    _chatBot = std::move(source._chatBot);
+    source._childEdges.clear();
+    source._parentEdges.clear();
     source._id = 0;
     source._answers.clear();
 
@@ -153,10 +155,10 @@ void GraphNode::AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge)
 
 //// STUDENT CODE
 ////
-void GraphNode::MoveChatbotHere(std::unique_ptr<ChatBot> chatbot)
+void GraphNode::MoveChatbotHere(ChatBot &&chatbot)
 {
     _chatBot = std::move(chatbot);
-    _chatBot->SetCurrentNode(this);
+    _chatBot.SetCurrentNode(this);
 }
 
 void GraphNode::MoveChatbotToNewNode(GraphNode *newNode)

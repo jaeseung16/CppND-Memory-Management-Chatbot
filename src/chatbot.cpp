@@ -32,7 +32,7 @@ ChatBot::ChatBot(std::string filename)
 
 ChatBot::~ChatBot()
 {
-    std::cout << "ChatBot Destructor" << std::endl;
+    std::cout << "ChatBot Destructor " << std::endl;
 
     // deallocate heap memory
     if(_image != NULL) // Attention: wxWidgets used NULL and not nullptr
@@ -47,7 +47,7 @@ ChatBot::~ChatBot()
 
 ChatBot::ChatBot(const ChatBot &source)
 {
-    std::cout << "COPYING content of instance " << &source << " to instance " << this << std::endl;
+    std::cout << "ChatBot Copy Constructor" << std::endl;
 
     *_image = *source._image;
     *_chatLogic = *source._chatLogic;
@@ -57,7 +57,7 @@ ChatBot::ChatBot(const ChatBot &source)
 
 ChatBot &ChatBot::operator=(const ChatBot &source) 
 {
-    std::cout << "ASSIGNING content of instance " << &source << " to instance " << this << std::endl;
+    std::cout << "ChatBot Copy Assignement Operator" << std::endl;
         
     if (this == &source)
         return *this;
@@ -77,7 +77,7 @@ ChatBot &ChatBot::operator=(const ChatBot &source)
 
 ChatBot::ChatBot(ChatBot &&source)
 {
-    std::cout << "MOVING (constructor) instance " << &source << " to instance " << this << std::endl;
+    std::cout << "ChatBot Move Constructor" << std::endl;
     _image = source._image;
     _chatLogic = source._chatLogic;
     _rootNode = source._rootNode;
@@ -91,7 +91,7 @@ ChatBot::ChatBot(ChatBot &&source)
 
 ChatBot &ChatBot::operator=(ChatBot &&source)
 { 
-    std::cout << "MOVING (assingment) instance " << &source << " to instance " << this << std::endl;
+    std::cout << "ChatBot Move Assingment Operator" << std::endl;
 
     if (this == &source) 
        return *this;
@@ -163,6 +163,7 @@ void ChatBot::SetCurrentNode(GraphNode *node)
     std::string answer = answers.at(dis(generator));
 
     // send selected node answer to user
+    _chatLogic->SetCurrentNode(_currentNode);
     _chatLogic->SendMessageToUser(answer);
 }
 
