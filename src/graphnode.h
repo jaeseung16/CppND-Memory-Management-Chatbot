@@ -35,12 +35,6 @@ public:
     GraphNode(int id);
     ~GraphNode();
 
-    // rule of five: copy/move constructors & assigment operators
-    GraphNode(const GraphNode &source);
-    GraphNode &operator=(const GraphNode &source);
-    GraphNode(GraphNode &&source);
-    GraphNode &operator=(GraphNode &&source);
-
     // getter / setter
     int GetID() { return _id; }
     int GetNumberOfChildEdges() { return _childEdges.size(); }
