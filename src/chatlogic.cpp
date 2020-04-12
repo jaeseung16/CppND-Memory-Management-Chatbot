@@ -294,8 +294,6 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
     chatBotInStack.SetRootNode(rootNode);
     rootNode->MoveChatbotHere(std::move(chatBotInStack));
 
-    _currentNode = rootNode;
-
     ////
     //// EOF STUDENT CODE
 }
