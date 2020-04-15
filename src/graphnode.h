@@ -51,6 +51,12 @@ public:
     //// STUDENT CODE
     ////
 
+    // rule of five: copy/move constructors & assigment operators
+    GraphNode(const GraphNode &source);
+    GraphNode &operator=(const GraphNode &source);
+    GraphNode(GraphNode &&source);
+    GraphNode &operator=(GraphNode &&source);
+
     void MoveChatbotHere(ChatBot chatbot);
 
     ////
